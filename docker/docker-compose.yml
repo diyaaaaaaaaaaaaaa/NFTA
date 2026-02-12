@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - midnight-network
+
+networks:
+  midnight-network:
+    driver: bridge

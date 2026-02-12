@@ -1,0 +1,11 @@
+pragma language_version 0.20;
+
+import CompactStandardLibrary;
+
+// Test if we can concatenate two Bytes<32> values
+export circuit testConcat(): Bytes<32> {
+  const a: Bytes<16> = pad(16, "hello");
+  const b: Bytes<16> = pad(16, "world");
+  const combined: Bytes<32> = [a, b] as Bytes<32>;
+  return persistentHash<Bytes<32>>(combined);
+}

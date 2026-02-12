@@ -1,0 +1,28 @@
+pragma language_version 0.20;
+
+import CompactStandardLibrary;
+
+// MODULE 2: Core Data Models & Auction State Machine
+// Direct exports without module wrapper for Compact 0.20 compatibility
+
+export enum AuctionState {
+  CREATED,
+  COMMIT,
+  REVEAL,
+  FINALIZED,
+  CANCELLED
+}
+
+export type CommitHash = Bytes<32>;
+export type BidAmount = Uint<128>;
+export type Timestamp = Uint<64>;
+export type DepositAmount = Uint<128>;
+export type PublicKey = Bytes<32>;
+
+export struct AuctionConfig {
+  seller: PublicKey;
+  commitStart: Timestamp;
+  commitEnd: Timestamp;
+  revealEnd: Timestamp;
+  minDeposit: DepositAmount;
+}

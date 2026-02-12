@@ -1,0 +1,24 @@
+{
+  "name": "@nftauction/contract",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "compact": "COMPACT_PATH=\"$COMPACT_PATH:./node_modules:../node_modules\" compact compile src/nftauction.compact ./src/managed/nftauction",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed 2>/dev/null || true && cp ./src/nftauction.compact ./dist 2>/dev/null || true",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@midnight-ntwrk/compact-js-command": "^2.4.0",
+    "typescript": "^5.9.3"
+  }
+}

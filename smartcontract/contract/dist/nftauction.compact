@@ -1,0 +1,112 @@
+pragma language_version 0.20;
+
+import CompactStandardLibrary;
+
+export enum AuctionState {
+  CREATED,
+  COMMIT,
+  REVEAL,
+  FINALIZED,
+  CANCELLED
+}
+
+export ledger state: AuctionState;
+export ledger seller: Bytes<32>;
+export ledger commitStart: Uint<64>;
+export ledger commitEnd: Uint<64>;
+export ledger revealEnd: Uint<64>;
+export ledger minDeposit: Uint<128>;
+export ledger round: Counter;
+export ledger owner: Bytes<32>;
+export ledger paused: Boolean;
+export ledger highestBidAmount: Uint<128>;
+export ledger highestBidder: Bytes<32>;
+
+constructor() {
+  state = AuctionState.CREATED;
+  seller = pad(32, "");
+  commitStart = 0;
+  commitEnd = 0;
+  revealEnd = 0;
+  minDeposit = 0;
+  round.increment(1);
+  owner = pad(32, "");
+  paused = false;
+  highestBidAmount = 0;
+  highestBidder = pad(32, "");
+}
+
+witness localSecretKey(): Bytes<32>;
+
+circuit publicKey(sk:Bytes<32>, seq: Bytes<32>): Bytes<32> {
+  const hash1: Bytes<32> = persistentHash<Bytes<32>>(pad(32, "nftauction:pk:"));
+  const hash2: Bytes<32> = persistentHash<Bytes<32>>(seq);
+  const hash3: Bytes<32> = persistentHash<Bytes<32>>(sk);
+  return hash3;
+}
+
+export circuit initAuction(
+  sellerAddr: Bytes<32>,
+  startTime: Uint<64>,
+  endCommit: Uint<64>,
+  endReveal: Uint<64>,
+  minBid: Uint<128>
+): [] {
+  assert(state == AuctionState.CREATED, "Invalid state");
+  seller = disclose(sellerAddr);
+  commitStart = disclose(startTime);
+  commitEnd = disclose(endCommit);
+  revealEnd = disclose(endReveal);
+  minDeposit = disclose(minBid);
+}
+
+export circuit startCommit(): [] {
+  assert(!paused, "Paused");
+  assert(state == AuctionState.CREATED, "Invalid state");
+  state = AuctionState.COMMIT;
+}
+
+export circuit startReveal(): [] {
+  assert(!paused, "Paused");
+  assert(state == AuctionState.COMMIT, "Invalid state");
+  state = AuctionState.REVEAL;
+}
+
+export circuit finalize(): [] {
+  assert(!paused, "Paused");
+  assert(state == AuctionState.REVEAL, "Invalid state");
+  state = AuctionState.FINALIZED;
+}
+
+export circuit cancel(): [] {
+  assert(!paused, "Paused");
+  assert(state == AuctionState.CREATED || state == AuctionState.COMMIT, "Invalid state");
+  state = AuctionState.CANCELLED;
+}
+
+export circuit pause(): [] {
+  paused = true;
+}
+
+export circuit unpause(): [] {
+  paused = false;
+}
+
+export circuit recordBid(bidderAddr: Bytes<32>, bidAmount: Uint<128>): [] {
+  if (disclose(bidAmount) > highestBidAmount) {
+    highestBidAmount = disclose(bidAmount);
+    highestBidder = disclose(bidderAddr);
+  }
+}
+
+export circuit getState(): AuctionState {
+  return state;
+}
+
+export circuit getHighestBid(): Uint<128> {
+  return highestBidAmount;
+}
+
+export circuit getHighestBidder(): Bytes<32> {
+  return highestBidder;
+}

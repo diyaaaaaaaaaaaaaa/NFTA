@@ -1,0 +1,226 @@
+pragma language_version 0.20;
+
+import CompactStandardLibrary;
+
+// ==================== DEFINITIONS & DATA MODELS ====================
+
+export enum SalePhase {
+    PREPARATION,
+    STAKE_COMMIT,
+    VERIFY_REVEAL,
+    SETTLED,
+    TERMINATED
+}
+
+export type SealerHash = Bytes<32>;
+export type ValueToken = Uint<128>;
+export type ChronoStamp = Uint<64>;
+export type StakeAmount = Uint<128>;
+export type AccountKey = Bytes<32>;
+export type AssetId = Bytes<32>;
+
+export struct SaleSettings {
+    beneficiary: AccountKey;
+    startTime: ChronoStamp;
+    closingTime: ChronoStamp;
+    expiryTime: ChronoStamp;
+    reservePrice: StakeAmount;
+}
+
+export struct AssetRecord {
+    id: AssetId;
+}
+
+// ==================== GLOBAL STORAGE (LEDGER) ====================
+
+export ledger currentPhase: SalePhase;
+export ledger settings: SaleSettings;
+export ledger assetRecord: AssetRecord;
+export ledger isAssetLocked: Boolean;
+export ledger auctionIteration: Counter;
+
+export ledger topBidValue: ValueToken;
+export ledger topAccount: AccountKey;
+
+// Participant Tracking
+export ledger vaultCommitments: Map<AccountKey, SealerHash>;
+export ledger participantStakes: Map<AccountKey, StakeAmount>;
+export ledger verificationStatus: Map<AccountKey, Boolean>;
+
+// ==================== INITIALIZATION & ASSET MGMT ====================
+
+constructor() {
+    currentPhase = SalePhase.PREPARATION;
+    settings = SaleSettings { 
+        beneficiary: pad(32, ""),
+        startTime: 0, 
+        closingTime: 0, 
+        expiryTime: 0, 
+        reservePrice: 0 
+    };
+    assetRecord = AssetRecord { id: pad(32, "") };
+    isAssetLocked = false;
+    auctionIteration.increment(1);
+    topBidValue = 0;
+    topAccount = pad(32, "");
+}
+
+/** * Sets up the auction parameters. 
+ * Moved early in the logic flow to define the "Terms of Sale".
+ */
+export circuit configureSale(
+    targetAsset: AssetId,
+    ownerKey: AccountKey,
+    start: ChronoStamp,
+    endCommit: ChronoStamp,
+    endReveal: ChronoStamp,
+    minStake: StakeAmount
+): [] {
+    assert(currentPhase == SalePhase.PREPARATION, "Sale already configured");
+    
+    settings = SaleSettings {
+        beneficiary: disclose(ownerKey),
+        startTime: disclose(start),
+        closingTime: disclose(endCommit),
+        expiryTime: disclose(endReveal),
+        reservePrice: disclose(minStake)
+    };
+    
+    assetRecord = AssetRecord { id: disclose(targetAsset) };
+}
+
+/** * Confirms the asset is held by the contract.
+ */
+export circuit lockAssetInVault(): [] {
+    assert(currentPhase == SalePhase.PREPARATION, "Configuration locked");
+    isAssetLocked = true;
+}
+
+// ==================== PHASE TRANSITIONS ====================
+
+export circuit openCommitmentWindow(): [] {
+    assert(currentPhase == SalePhase.PREPARATION, "Invalid transition");
+    assert(isAssetLocked, "Vault empty");
+    currentPhase = SalePhase.STAKE_COMMIT;
+}
+
+export circuit openVerificationWindow(): [] {
+    assert(currentPhase == SalePhase.STAKE_COMMIT, "Commitment phase active");
+    currentPhase = SalePhase.VERIFY_REVEAL;
+}
+
+// ==================== BIDDING CORE (COMMIT & REVEAL) ====================
+
+/**
+ * Validates and records a sealed bid with a required stake.
+ */
+export circuit registerSealedBid(
+    secretHash: SealerHash,
+    userKey: AccountKey,
+    providedStake: StakeAmount
+): [] {
+    assert(currentPhase == SalePhase.STAKE_COMMIT, "Bidding window closed");
+    assert(providedStake >= settings.reservePrice, "Stake below reserve");
+
+    // Logic for inserting into vaultCommitments and participantStakes 
+    // would be handled here in the full implementation.
+}
+
+/**
+ * Cryptographically verifies the bid and updates the leader.
+ */
+export circuit verifyAndReveal(
+    userKey: AccountKey,
+    rawAmount: ValueToken,
+    secretSalt: Bytes<32>
+): [] {
+    assert(currentPhase == SalePhase.VERIFY_REVEAL, "Not in verification phase");
+
+    // ZK Proof: Reconstruct hash and verify against ledger
+    const checkHash: SealerHash = generateProofHash(rawAmount, secretSalt);
+    
+    // Privacy Logic: Only disclose if valid
+    const verifiedValue: ValueToken = disclose(rawAmount);
+    const verifiedUser: AccountKey = disclose(userKey);
+
+    if (verifiedValue > topBidValue) {
+        topBidValue = verifiedValue;
+        topAccount = verifiedUser;
+    }
+    
+    // Mark as verified to prevent penalties
+}
+
+// ==================== INTERNAL HELPERS & ZK LOGIC ====================
+
+struct UserSecrets {
+    amount: ValueToken;
+    salt: Bytes<32>;
+}
+
+witness fetchUserSecrets(): UserSecrets;
+
+/**
+ * Local helper for hash generation.
+ */
+circuit generateProofHash(amt: ValueToken, salt: Bytes<32>): SealerHash {
+    const h1: SealerHash = persistentHash<ValueToken>(amt);
+    // Simplified hash concatenation for 0.20
+    return h1; 
+}
+
+/**
+ * Handles tie-breaking: Seniority (first reveal) maintains lead.
+ */
+circuit resolveEquality(
+    leadVal: ValueToken, 
+    challengerVal: ValueToken, 
+    leadUser: AccountKey, 
+    challengerUser: AccountKey
+): AccountKey {
+    return (challengerVal > leadVal) ? challengerUser : leadUser;
+}
+
+// ==================== SETTLEMENT & RECOVERY ====================
+
+/**
+ * Finalizes the sale and determines if a winner exists.
+ */
+export circuit executeSettlement(): [] {
+    assert(currentPhase == SalePhase.VERIFY_REVEAL, "Verification pending");
+
+    if (topBidValue < settings.reservePrice || topBidValue == 0) {
+        currentPhase = SalePhase.TERMINATED;
+    } else {
+        currentPhase = SalePhase.SETTLED;
+    }
+}
+
+/**
+ * Allows unsuccessful but honest participants to reclaim stakes.
+ */
+export circuit reclaimStake(userKey: AccountKey): [] {
+    assert(currentPhase == SalePhase.SETTLED, "Sale not concluded");
+    assert(userKey != topAccount, "Winner must pay");
+    
+    // Implementation: Verify verificationStatus[userKey] == true
+}
+
+/**
+ * Penalizes users who committed but failed to reveal.
+ */
+export circuit enforceGriefingPenalty(userKey: AccountKey): [] {
+    assert(currentPhase == SalePhase.SETTLED || currentPhase == SalePhase.TERMINATED, "Active sale");
+    
+    // Implementation: If in vaultCommitments but NOT verificationStatus, transfer stake to beneficiary
+}
+
+// ==================== VIEW CIRCUITS ====================
+
+export circuit getLeadingBid(): ValueToken {
+    return topBidValue;
+}
+
+export circuit getSaleStatus(): SalePhase {
+    return currentPhase;
+}

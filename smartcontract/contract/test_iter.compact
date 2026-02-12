@@ -1,0 +1,12 @@
+pragma language_version 0.20;
+
+import CompactStandardLibrary;
+
+// Try hashing iteratively
+export circuit testIterativeHash(): Bytes<32> {
+  let result: Bytes<32> = pad(32, "nftauction:pk:");
+  result = persistentHash<Bytes<32>>(result);
+  // Now hash the next value...
+  // But wait, we're using only result, not combining with other values
+  return result;
+}
