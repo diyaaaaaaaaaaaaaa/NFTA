@@ -1,7 +1,7 @@
-ZK Vault & Private Sale Registry 🚀
+## ZK Vault & Private Sale Registry 🚀
 A decentralized, privacy-preserving asset exchange platform built on the Midnight Blockchain. This project implements a secure, vault-based sealed-bid mechanism where values remain private until the verification phase, leveraging Midnight's zero-knowledge capabilities to ensure a fair and strategic trading environment.
 
-Project Description
+## Project Description
 The ZK Vault & Private Sale Registry allows users to trade digital assets in a completely secure and private manner. Unlike traditional transparent marketplaces, this platform uses a sophisticated stake-and-verify process:
 
 Sale Configuration: Beneficiaries list their assets with specific reserve prices and registry settings.
