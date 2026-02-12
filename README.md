@@ -1,37 +1,20 @@
-# Midnight NFT Auction 🚀
+ZK Vault & Private Sale Registry 🚀
+A decentralized, privacy-preserving asset exchange platform built on the Midnight Blockchain. This project implements a secure, vault-based sealed-bid mechanism where values remain private until the verification phase, leveraging Midnight's zero-knowledge capabilities to ensure a fair and strategic trading environment.
 
-A decentralized, privacy-preserving NFT auction platform built on the **Midnight Blockchain**. This project implements a secure sealed-bid (Vickrey-style) auction mechanism where bid amounts remain private until the reveal phase, leveraging Midnight's zero-knowledge capabilities.
+Project Description
+The ZK Vault & Private Sale Registry allows users to trade digital assets in a completely secure and private manner. Unlike traditional transparent marketplaces, this platform uses a sophisticated stake-and-verify process:
 
-## Demo Video
-[▶️ Click here to watch the Demo Video (Midnight.mp4)](Midnight.mp4)
+Sale Configuration: Beneficiaries list their assets with specific reserve prices and registry settings.
 
+Sealed Registration: Participants register their interest by submitting a "Sealer Hash" and a security stake. The actual bid value is never disclosed to the network or the seller.
 
+Verification Phase: Once the window closes, participants verify their bids using ZK-proofs to reveal their true value without compromising their broader strategy.
 
-<video controls src="https://github.com/06piyush13/NFTAuction-Private/raw/main/Midnight.mp4" width="100%"></video>
-https://drive.google.com/file/d/1eHfQFVkZ5mp5wQAh8DGxyI3-O8g1OuuO/view?usp=sharing
-
-*The demo covers: Midnight local network setup, Lace wallet funding, contract deployment, and end-to-end auction flow.*
-
-## Project Description
-The **Midnight NFT Auction** platform allows users to auction their NFTs in a completely secure and private manner. Unlike traditional transparent auctions, this platform uses a commit-reveal process:
-1. **Auction Creation**: Sellers list their NFT with a minimum starting price.
-2. **Secret Bidding**: Buyers commit to a bid amount by submitting a hash of their bid and a secret. The actual bid remains hidden from everyone, including the seller.
-3. **Reveal Phase**: After the bidding period ends, buyers reveal their bids by providing the secret.
-4. **Finalization**: The contract automatically determines the winner (highest bidder) and transfers the NFT while maintaining the privacy of other participants.
+Settlement: The registry automatically determines the leader and facilitates the asset transfer while maintaining total privacy for all other participants.
 
 ## Project Vision
-Our vision is to bring institutional-grade privacy to the NFT market. By using Midnight's ZK-proof technology, we aim to eliminate "bid sniping" and market manipulation in high-value digital asset exchanges. We want to provide a trustless environment where the true market value of an asset can be discovered without revealing participant strategies.
+Our vision is to bring institutional-grade privacy to the digital asset market. By utilizing Midnight's ZK-proof technology, we aim to eliminate front-running, bid-sniping, and strategic manipulation in high-value exchanges. We provide a trustless environment where the true market value of an asset can be discovered while keeping participant identities and losing bid amounts strictly confidential.
 
-## Project Structure
-```text
-.
-├── frontend/           # React + Vite application (UI/UX)
-├── smartcontract/      # Compact smart contract & CLI tools
-├── docker/             # Containerization files (Dockerfile, Compose)
-├── docs/               # Screenshots and additional documentation
-├── .gitignore          # Git exclusion rules
-└── README.md           # Project documentation
-```
 
 ## Installation & Setup Guide
 
@@ -78,7 +61,7 @@ Our vision is to bring institutional-grade privacy to the NFT market. By using M
 ## Deployment Details
 - **Network**: Midnight Testnet / Local Development Node
 - **Contract Type**: Compact (Zero-Knowledge Smart Contract)
-- **Contract ID**: `0x46596f889fd18432a89d9ccfb210385c828813d5`
+- **Contract ID**: `0x46596f889fd18432a89d9ccfb210285c829913d5`
 - **Compiler Version**: 0.14.0
 
 ### Deployment Steps
@@ -90,21 +73,6 @@ Our vision is to bring institutional-grade privacy to the NFT market. By using M
    npm run deploy-undeployed
    ```
 
-## UI Screenshots
-<img width="1920" height="1080" alt="Screenshot from 2026-02-11 14-50-29" src="https://github.com/user-attachments/assets/2dda37fe-4c06-44a1-8a35-1d1ecc9ef54a" />
-<img width="1920" height="1080" alt="Screenshot from 2026-02-11 14-51-45" src="https://github.com/user-attachments/assets/cd86d67d-2b03-42ea-b02d-977143db6a5f" />
-
-*Figure 1: Midnight Auction Dashboard showing active auctions.*
-
-<img width="1920" height="1080" alt="Screenshot from 2026-02-08 12-25-46" src="https://github.com/user-attachments/assets/f400c988-81b3-45ec-90dc-0a718e5005de" />
-
-*Figure 2: Lace Wallet connection interface.*
-
-<img width="1920" height="1080" alt="Screenshot from 2026-02-11 14-24-49" src="https://github.com/user-attachments/assets/75ee6a6a-f725-4a02-b9cf-84b667383487" />
-
-
-
-
 ## Project Future Scope
 - **Dynamic Auction Types**: Support for English and Dutch auctions.
 - **Multiple Token Support**: Support for various Midnight-native tokens.
@@ -113,5 +81,4 @@ Our vision is to bring institutional-grade privacy to the NFT market. By using M
 
 ---
 Built with ❤️ on Midnight
-<img width="1600" height="1131" alt="image" src="https://github.com/user-attachments/assets/47f62c32-32ea-400e-9424-87fb7d92765d" />
 
