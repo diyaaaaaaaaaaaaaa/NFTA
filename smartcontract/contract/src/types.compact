@@ -2,27 +2,35 @@ pragma language_version 0.20;
 
 import CompactStandardLibrary;
 
-// MODULE 2: Core Data Models & Auction State Machine
-// Direct exports without module wrapper for Compact 0.20 compatibility
+// ==================== REVISED CORE DATA MODELS & STATE MACHINE ====================
 
-export enum AuctionState {
-  CREATED,
-  COMMIT,
-  REVEAL,
-  FINALIZED,
-  CANCELLED
+/**
+ * Renamed to SalePhase to reflect a registry-based approach.
+ * Tracks the progression from initial setup to final settlement.
+ */
+export enum SalePhase {
+  PREPARATION,  // Formerly CREATED
+  STAKE_COMMIT, // Formerly COMMIT
+  VERIFY_REVEAL, // Formerly REVEAL
+  SETTLED,      // Formerly FINALIZED
+  TERMINATED    // Formerly CANCELLED
 }
 
-export type CommitHash = Bytes<32>;
-export type BidAmount = Uint<128>;
-export type Timestamp = Uint<64>;
-export type DepositAmount = Uint<128>;
-export type PublicKey = Bytes<32>;
+// Custom types renamed for domain-specific clarity
+export type SealerHash = Bytes<32>;     // Cryptographic commitment
+export type ValueToken = Uint<128>;     // Monetary bid value
+export type ChronoStamp = Uint<64>;     // Network timestamp
+export type StakeAmount = Uint<128>;    // Security deposit
+export type AccountKey = Bytes<32>;     // Participant identifier
 
-export struct AuctionConfig {
-  seller: PublicKey;
-  commitStart: Timestamp;
-  commitEnd: Timestamp;
-  revealEnd: Timestamp;
-  minDeposit: DepositAmount;
+/**
+ * SaleSettings: Replaces AuctionConfig.
+ * Defines the parameters for the asset exchange.
+ */
+export struct SaleSettings {
+  beneficiary: AccountKey;  // The asset owner receiving funds
+  openingTime: ChronoStamp; // Start of commitment window
+  closingTime: ChronoStamp; // End of commitment window
+  expiryTime: ChronoStamp;  // Deadline for ZK reveal
+  reservePrice: StakeAmount; // Minimum stake required to participate
 }

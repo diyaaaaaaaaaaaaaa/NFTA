@@ -1,417 +1,156 @@
 {
   "circuits": [
     {
-      "name": "initAuction",
+      "name": "configureSale",
       "pure": false,
       "arguments": [
         {
-          "name": "nftId",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "targetAsset",
+          "type": { "type-name": "Bytes", "length": 32 }
         },
         {
-          "name": "sellerAddr",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "ownerKey",
+          "type": { "type-name": "Bytes", "length": 32 }
         },
         {
-          "name": "startTime",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
+          "name": "start",
+          "type": { "type-name": "Uint", "maxval": 18446744073709551615 }
         },
         {
-          "name": "endCommit",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
+          "name": "closingTime",
+          "type": { "type-name": "Uint", "maxval": 18446744073709551615 }
         },
         {
-          "name": "endReveal",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
+          "name": "expiryTime",
+          "type": { "type-name": "Uint", "maxval": 18446744073709551615 }
         },
         {
-          "name": "minBid",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
-          }
+          "name": "reservePrice",
+          "type": { "type-name": "Uint", "maxval": 340282366920938463463374607431768211455 }
         }
       ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "escrowNFT",
+      "name": "lockAssetInVault",
       "pure": false,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
+      "arguments": [],
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "startCommitPhase",
+      "name": "openCommitmentWindow",
       "pure": false,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
+      "arguments": [],
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "commitBid",
+      "name": "registerSealedBid",
       "pure": false,
       "arguments": [
         {
-          "name": "commitment",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "secretHash",
+          "type": { "type-name": "Bytes", "length": 32 }
         },
         {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "userKey",
+          "type": { "type-name": "Bytes", "length": 32 }
         }
       ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "hasCommitted",
-      "pure": true,
-      "arguments": [
-        {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Boolean"
-      }
-    },
-    {
-      "name": "startRevealPhase",
-      "pure": false,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "revealBid",
+      "name": "verifyAndReveal",
       "pure": false,
       "arguments": [
         {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "userKey",
+          "type": { "type-name": "Bytes", "length": 32 }
         },
         {
-          "name": "bidAmount",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
-          }
+          "name": "rawAmount",
+          "type": { "type-name": "Uint", "maxval": 340282366920938463463374607431768211455 }
         },
         {
-          "name": "nonce",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "secretSalt",
+          "type": { "type-name": "Bytes", "length": 32 }
         }
       ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "penalizeNonReveal",
+      "name": "enforceGriefingPenalty",
       "pure": false,
       "arguments": [
         {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
+          "name": "userKey",
+          "type": { "type-name": "Bytes", "length": 32 }
         }
       ],
+      "result-type": { "type-name": "Tuple", "types": [] }
+    },
+    {
+      "name": "getLeadingBid",
+      "pure": false,
+      "arguments": [],
+      "result-type": { "type-name": "Uint", "maxval": 340282366920938463463374607431768211455 }
+    },
+    {
+      "name": "executeSettlement",
+      "pure": false,
+      "arguments": [],
+      "result-type": { "type-name": "Tuple", "types": [] }
+    },
+    {
+      "name": "getSaleSummary",
+      "pure": false,
+      "arguments": [],
       "result-type": {
-        "type-name": "Tuple",
-        "types": [
+        "type-name": "Struct",
+        "name": "SaleSummary",
+        "elements": [
+          { "name": "isSettled", "type": { "type-name": "Boolean" } },
+          { "name": "topValue", "type": { "type-name": "Uint", "maxval": 340282366920938463463374607431768211455 } },
+          { "name": "leader", "type": { "type-name": "Bytes", "length": 32 } }
         ]
       }
     },
     {
-      "name": "getHighestBid",
+      "name": "registerBidWithStake",
       "pure": false,
       "arguments": [
+        { "name": "secretHash", "type": { "type-name": "Bytes", "length": 32 } },
+        { "name": "userKey", "type": { "type-name": "Bytes", "length": 32 } },
+        { "name": "providedStake", "type": { "type-name": "Uint", "maxval": 340282366920938463463374607431768211455 } }
       ],
-      "result-type": {
-        "type-name": "Uint",
-        "maxval": 340282366920938463463374607431768211455
-      }
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "getHighestBidder",
+      "name": "reclaimStake",
       "pure": false,
       "arguments": [
+        { "name": "userKey", "type": { "type-name": "Bytes", "length": 32 } }
       ],
-      "result-type": {
-        "type-name": "Bytes",
-        "length": 32
-      }
+      "result-type": { "type-name": "Tuple", "types": [] }
     },
     {
-      "name": "finalizeAuction",
+      "name": "getVaultStatus",
       "pure": false,
       "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "canFinalize",
-      "pure": false,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Boolean"
-      }
-    },
-    {
-      "name": "getAuctionResult",
-      "pure": false,
-      "arguments": [
+        { "name": "userKey", "type": { "type-name": "Bytes", "length": 32 } }
       ],
       "result-type": {
         "type-name": "Struct",
-        "name": "AuctionResult",
+        "name": "VaultStatus",
         "elements": [
-          {
-            "name": "hasWinner",
-            "type": {
-              "type-name": "Boolean"
-            }
-          },
-          {
-            "name": "winningBid",
-            "type": {
-              "type-name": "Uint",
-              "maxval": 340282366920938463463374607431768211455
-            }
-          },
-          {
-            "name": "winner",
-            "type": {
-              "type-name": "Bytes",
-              "length": 32
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "commitBidWithDeposit",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "commitment",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "depositAmount",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "revealBidWithTracking",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "bidAmount",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
-          }
-        },
-        {
-          "name": "nonce",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "refundLoser",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "forfeitNonRevealer",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "claimWinnerPayment",
-      "pure": false,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "getDepositStatus",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "bidderPubKey",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Struct",
-        "name": "DepositStatus",
-        "elements": [
-          {
-            "name": "hasCommitted",
-            "type": {
-              "type-name": "Boolean"
-            }
-          },
-          {
-            "name": "hasRevealed",
-            "type": {
-              "type-name": "Boolean"
-            }
-          },
-          {
-            "name": "isWinner",
-            "type": {
-              "type-name": "Boolean"
-            }
-          },
-          {
-            "name": "canRefund",
-            "type": {
-              "type-name": "Boolean"
-            }
-          },
-          {
-            "name": "canForfeit",
-            "type": {
-              "type-name": "Boolean"
-            }
-          }
+          { "name": "isRegistered", "type": { "type-name": "Boolean" } },
+          { "name": "isVerified", "type": { "type-name": "Boolean" } },
+          { "name": "isLeader", "type": { "type-name": "Boolean" } },
+          { "name": "eligibleForRefund", "type": { "type-name": "Boolean" } },
+          { "name": "subjectToForfeit", "type": { "type-name": "Boolean" } }
         ]
       }
     }
   ],
-  "witnesses": [
-  ],
-  "contracts": [
-  ]
+  "witnesses": [],
+  "contracts": []
 }
